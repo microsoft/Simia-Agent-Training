@@ -1,0 +1,1486 @@
+{
+  "tools_config_1": {
+    "count": 5838,
+    "tool_count": 13,
+    "tool_names": [
+      "disable_roaming",
+      "enable_roaming",
+      "get_bills_for_customer",
+      "get_customer_by_id",
+      "get_customer_by_name",
+      "get_customer_by_phone",
+      "get_data_usage",
+      "get_details_by_id",
+      "refuel_data",
+      "resume_line",
+      "send_payment_request",
+      "suspend_line",
+      "transfer_to_human_agents"
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_customer_by_phone",
+          "description": "Finds a customer by their primary contact or line phone number.",
+          "parameters": {
+            "properties": {
+              "phone_number": {
+                "description": "The phone number to search for.",
+                "title": "Phone Number",
+                "type": "string"
+              }
+            },
+            "required": [
+              "phone_number"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_customer_by_id",
+          "description": "Retrieves a customer directly by their unique ID.",
+          "parameters": {
+            "properties": {
+              "customer_id": {
+                "description": "The unique identifier of the customer.",
+                "title": "Customer Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "customer_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_customer_by_name",
+          "description": "Searches for customers by name and DOB. May return multiple matches if names are similar,\n\nDOB helps disambiguate.",
+          "parameters": {
+            "properties": {
+              "full_name": {
+                "description": "The full name of the customer.",
+                "title": "Full Name",
+                "type": "string"
+              },
+              "dob": {
+                "description": "Date of birth for verification, in the format YYYY-MM-DD.",
+                "title": "Dob",
+                "type": "string"
+              }
+            },
+            "required": [
+              "full_name",
+              "dob"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_details_by_id",
+          "description": "Retrieves the details for a given ID.\n\nThe ID must be a valid ID for a Customer, Line, Device, Bill, or Plan.",
+          "parameters": {
+            "properties": {
+              "id": {
+                "description": "The ID of the object to retrieve.",
+                "title": "Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "suspend_line",
+          "description": "Suspends a specific line (max 6 months).\n\nChecks: Line status must be Active.\nLogic: Sets line status to Suspended, records suspension_start_date.",
+          "parameters": {
+            "properties": {
+              "customer_id": {
+                "description": "ID of the customer who owns the line.",
+                "title": "Customer Id",
+                "type": "string"
+              },
+              "line_id": {
+                "description": "ID of the line to suspend.",
+                "title": "Line Id",
+                "type": "string"
+              },
+              "reason": {
+                "description": "Reason for suspension.",
+                "title": "Reason",
+                "type": "string"
+              }
+            },
+            "required": [
+              "customer_id",
+              "line_id",
+              "reason"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "resume_line",
+          "description": "Resumes a suspended line.\n\nChecks: Line status must be Suspended or Pending Activation.\nLogic: Sets line status to Active, clears suspension_start_date.",
+          "parameters": {
+            "properties": {
+              "customer_id": {
+                "description": "ID of the customer who owns the line.",
+                "title": "Customer Id",
+                "type": "string"
+              },
+              "line_id": {
+                "description": "ID of the line to resume.",
+                "title": "Line Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "customer_id",
+              "line_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_bills_for_customer",
+          "description": "Retrieves a list of the customer's bills, most recent first.",
+          "parameters": {
+            "properties": {
+              "customer_id": {
+                "description": "ID of the customer.",
+                "title": "Customer Id",
+                "type": "string"
+              },
+              "limit": {
+                "default": 12,
+                "description": "Maximum number of bills to return.",
+                "title": "Limit",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "customer_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "send_payment_request",
+          "description": "Sends a payment request to the customer for a specific bill.\n\nChecks:\n    - Customer exists\n    - Bill exists and belongs to the customer\n    - No other bills are already awaiting payment for this customer\nLogic: Sets bill status to AWAITING_PAYMENT and notifies customer.\nWarning: This method does not check if the bill is already PAID.\nAlways check the bill status before calling this method.",
+          "parameters": {
+            "properties": {
+              "customer_id": {
+                "description": "ID of the customer who owns the bill.",
+                "title": "Customer Id",
+                "type": "string"
+              },
+              "bill_id": {
+                "description": "ID of the bill to send payment request for.",
+                "title": "Bill Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "customer_id",
+              "bill_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_data_usage",
+          "description": "Retrieves current billing cycle data usage for a line, including data\n\nrefueling amount, data limit, and cycle end date.",
+          "parameters": {
+            "properties": {
+              "customer_id": {
+                "description": "ID of the customer who owns the line.",
+                "title": "Customer Id",
+                "type": "string"
+              },
+              "line_id": {
+                "description": "ID of the line to check usage for.",
+                "title": "Line Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "customer_id",
+              "line_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "enable_roaming",
+          "description": "Enables international roaming on a line.",
+          "parameters": {
+            "properties": {
+              "customer_id": {
+                "description": "ID of the customer who owns the line.",
+                "title": "Customer Id",
+                "type": "string"
+              },
+              "line_id": {
+                "description": "ID of the line to enable roaming for.",
+                "title": "Line Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "customer_id",
+              "line_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "disable_roaming",
+          "description": "Disables international roaming on a line.",
+          "parameters": {
+            "properties": {
+              "customer_id": {
+                "description": "ID of the customer who owns the line.",
+                "title": "Customer Id",
+                "type": "string"
+              },
+              "line_id": {
+                "description": "ID of the line to disable roaming for.",
+                "title": "Line Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "customer_id",
+              "line_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "transfer_to_human_agents",
+          "description": "Transfer the user to a human agent, with a summary of the user's issue.\n\nOnly transfer if\n -  the user explicitly asks for a human agent\n -  given the policy and the available tools, you cannot solve the user's issue.",
+          "parameters": {
+            "properties": {
+              "summary": {
+                "description": "A summary of the user's issue.",
+                "title": "Summary",
+                "type": "string"
+              }
+            },
+            "required": [
+              "summary"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "refuel_data",
+          "description": "Refuels data for a specific line, adding to the customer's bill.\n\nChecks: Line status must be Active, Customer owns the line.\nLogic: Adds data to the line and charges customer based on the plan's refueling rate.",
+          "parameters": {
+            "properties": {
+              "customer_id": {
+                "description": "ID of the customer who owns the line.",
+                "title": "Customer Id",
+                "type": "string"
+              },
+              "line_id": {
+                "description": "ID of the line to refuel data for.",
+                "title": "Line Id",
+                "type": "string"
+              },
+              "gb_amount": {
+                "description": "Amount of data to add in gigabytes.",
+                "title": "Gb Amount",
+                "type": "number"
+              }
+            },
+            "required": [
+              "customer_id",
+              "line_id",
+              "gb_amount"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      }
+    ]
+  },
+  "tools_config_2": {
+    "count": 2918,
+    "tool_count": 15,
+    "tool_names": [
+      "calculate",
+      "cancel_pending_order",
+      "exchange_delivered_order_items",
+      "find_user_id_by_email",
+      "find_user_id_by_name_zip",
+      "get_order_details",
+      "get_product_details",
+      "get_user_details",
+      "list_all_product_types",
+      "modify_pending_order_address",
+      "modify_pending_order_items",
+      "modify_pending_order_payment",
+      "modify_user_address",
+      "return_delivered_order_items",
+      "transfer_to_human_agents"
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "calculate",
+          "description": "Calculate the result of a mathematical expression.",
+          "parameters": {
+            "properties": {
+              "expression": {
+                "description": "The mathematical expression to calculate, such as '2 + 2'. The expression can contain numbers, operators (+, -, *, /), parentheses, and spaces.",
+                "title": "Expression",
+                "type": "string"
+              }
+            },
+            "required": [
+              "expression"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "cancel_pending_order",
+          "description": "Cancel a pending order. If the order is already processed or delivered,\n\nit cannot be cancelled. The agent needs to explain the cancellation detail\nand ask for explicit user confirmation (yes/no) to proceed. If the user confirms,\nthe order status will be changed to 'cancelled' and the payment will be refunded.\nThe refund will be added to the user's gift card balance immediately if the payment\nwas made using a gift card, otherwise the refund would take 5-7 business days to process.\nThe function returns the order details after the cancellation.",
+          "parameters": {
+            "properties": {
+              "order_id": {
+                "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                "title": "Order Id",
+                "type": "string"
+              },
+              "reason": {
+                "description": "The reason for cancellation, which should be either 'no longer needed' or 'ordered by mistake'.",
+                "title": "Reason",
+                "type": "string"
+              }
+            },
+            "required": [
+              "order_id",
+              "reason"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "exchange_delivered_order_items",
+          "description": "Exchange items in a delivered order to new items of the same product type.\n\nFor a delivered order, return or exchange can be only done once by the agent.\nThe agent needs to explain the exchange detail and ask for explicit user confirmation (yes/no) to proceed.",
+          "parameters": {
+            "properties": {
+              "order_id": {
+                "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                "title": "Order Id",
+                "type": "string"
+              },
+              "item_ids": {
+                "description": "The item ids to be exchanged, each such as '1008292230'. There could be duplicate items in the list.",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Item Ids",
+                "type": "array"
+              },
+              "new_item_ids": {
+                "description": "The item ids to be exchanged for, each such as '1008292230'.\nThere could be duplicate items in the list. Each new item id should match the item id\nin the same position and be of the same product.",
+                "items": {
+                  "type": "string"
+                },
+                "title": "New Item Ids",
+                "type": "array"
+              },
+              "payment_method_id": {
+                "description": "The payment method id to pay or receive refund for the item price difference,\nsuch as 'gift_card_0000000' or 'credit_card_0000000'. These can be looked up\nfrom the user or order details.",
+                "title": "Payment Method Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "order_id",
+              "item_ids",
+              "new_item_ids",
+              "payment_method_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "find_user_id_by_name_zip",
+          "description": "Find user id by first name, last name, and zip code. If the user is not found, the function\n\nwill return an error message. By default, find user id by email, and only call this function\nif the user is not found by email or cannot remember email.",
+          "parameters": {
+            "properties": {
+              "first_name": {
+                "description": "The first name of the customer, such as 'John'.",
+                "title": "First Name",
+                "type": "string"
+              },
+              "last_name": {
+                "description": "The last name of the customer, such as 'Doe'.",
+                "title": "Last Name",
+                "type": "string"
+              },
+              "zip": {
+                "description": "The zip code of the customer, such as '12345'.",
+                "title": "Zip",
+                "type": "string"
+              }
+            },
+            "required": [
+              "first_name",
+              "last_name",
+              "zip"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "find_user_id_by_email",
+          "description": "Find user id by email. If the user is not found, the function will return an error message.",
+          "parameters": {
+            "properties": {
+              "email": {
+                "description": "The email of the user, such as 'something@example.com'.",
+                "title": "Email",
+                "type": "string"
+              }
+            },
+            "required": [
+              "email"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_order_details",
+          "description": "Get the status and details of an order.",
+          "parameters": {
+            "properties": {
+              "order_id": {
+                "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                "title": "Order Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "order_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_product_details",
+          "description": "Get the inventory details of a product.",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "description": "The product id, such as '6086499569'. Be careful the product id is different from the item id.",
+                "title": "Product Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_user_details",
+          "description": "Get the details of a user, including their orders.",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "description": "The user id, such as 'sara_doe_496'.",
+                "title": "User Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "list_all_product_types",
+          "description": "List the name and product id of all product types.\n\nEach product type has a variety of different items with unique item ids and options.\nThere are only 50 product types in the store.",
+          "parameters": {
+            "properties": {},
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "modify_pending_order_address",
+          "description": "Modify the shipping address of a pending order. The agent needs to explain the modification detail and ask for explicit user confirmation (yes/no) to proceed.",
+          "parameters": {
+            "properties": {
+              "order_id": {
+                "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                "title": "Order Id",
+                "type": "string"
+              },
+              "address1": {
+                "description": "The first line of the address, such as '123 Main St'.",
+                "title": "Address1",
+                "type": "string"
+              },
+              "address2": {
+                "description": "The second line of the address, such as 'Apt 1' or ''.",
+                "title": "Address2",
+                "type": "string"
+              },
+              "city": {
+                "description": "The city, such as 'San Francisco'.",
+                "title": "City",
+                "type": "string"
+              },
+              "state": {
+                "description": "The state, such as 'CA'.",
+                "title": "State",
+                "type": "string"
+              },
+              "country": {
+                "description": "The country, such as 'USA'.",
+                "title": "Country",
+                "type": "string"
+              },
+              "zip": {
+                "description": "The zip code, such as '12345'.",
+                "title": "Zip",
+                "type": "string"
+              }
+            },
+            "required": [
+              "order_id",
+              "address1",
+              "address2",
+              "city",
+              "state",
+              "country",
+              "zip"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "modify_pending_order_items",
+          "description": "Modify items in a pending order to new items of the same product type. For a pending order, this function can only be called once. The agent needs to explain the exchange detail and ask for explicit user confirmation (yes/no) to proceed.",
+          "parameters": {
+            "properties": {
+              "order_id": {
+                "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                "title": "Order Id",
+                "type": "string"
+              },
+              "item_ids": {
+                "description": "The item ids to be modified, each such as '1008292230'. There could be duplicate items in the list.",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Item Ids",
+                "type": "array"
+              },
+              "new_item_ids": {
+                "description": "The item ids to be modified for, each such as '1008292230'. There could be duplicate items in the list. Each new item id should match the item id in the same position and be of the same product.",
+                "items": {
+                  "type": "string"
+                },
+                "title": "New Item Ids",
+                "type": "array"
+              },
+              "payment_method_id": {
+                "description": "The payment method id to pay or receive refund for the item price difference, such as 'gift_card_0000000' or 'credit_card_0000000'. These can be looked up from the user or order details.",
+                "title": "Payment Method Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "order_id",
+              "item_ids",
+              "new_item_ids",
+              "payment_method_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "modify_pending_order_payment",
+          "description": "Modify the payment method of a pending order. The agent needs to explain the modification detail and ask for explicit user confirmation (yes/no) to proceed.",
+          "parameters": {
+            "properties": {
+              "order_id": {
+                "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                "title": "Order Id",
+                "type": "string"
+              },
+              "payment_method_id": {
+                "description": "The payment method id to pay or receive refund for the item price difference, such as 'gift_card_0000000' or 'credit_card_0000000'. These can be looked up from the user or order details.",
+                "title": "Payment Method Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "order_id",
+              "payment_method_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "modify_user_address",
+          "description": "Modify the default address of a user. The agent needs to explain the modification detail and ask for explicit user confirmation (yes/no) to proceed.",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "description": "The user id, such as 'sara_doe_496'.",
+                "title": "User Id",
+                "type": "string"
+              },
+              "address1": {
+                "description": "The first line of the address, such as '123 Main St'.",
+                "title": "Address1",
+                "type": "string"
+              },
+              "address2": {
+                "description": "The second line of the address, such as 'Apt 1' or ''.",
+                "title": "Address2",
+                "type": "string"
+              },
+              "city": {
+                "description": "The city, such as 'San Francisco'.",
+                "title": "City",
+                "type": "string"
+              },
+              "state": {
+                "description": "The state, such as 'CA'.",
+                "title": "State",
+                "type": "string"
+              },
+              "country": {
+                "description": "The country, such as 'USA'.",
+                "title": "Country",
+                "type": "string"
+              },
+              "zip": {
+                "description": "The zip code, such as '12345'.",
+                "title": "Zip",
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "address1",
+              "address2",
+              "city",
+              "state",
+              "country",
+              "zip"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "return_delivered_order_items",
+          "description": "Return some items of a delivered order.\n\nThe order status will be changed to 'return requested'.\nThe agent needs to explain the return detail and ask for explicit user confirmation (yes/no) to proceed.\nThe user will receive follow-up email for how and where to return the item.",
+          "parameters": {
+            "properties": {
+              "order_id": {
+                "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                "title": "Order Id",
+                "type": "string"
+              },
+              "item_ids": {
+                "description": "The item ids to be returned, each such as '1008292230'. There could be duplicate items in the list.",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Item Ids",
+                "type": "array"
+              },
+              "payment_method_id": {
+                "description": "The payment method id to pay or receive refund for the item price difference, such as 'gift_card_0000000' or 'credit_card_0000000'.\nThese can be looked up from the user or order details.",
+                "title": "Payment Method Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "order_id",
+              "item_ids",
+              "payment_method_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "transfer_to_human_agents",
+          "description": "Transfer the user to a human agent, with a summary of the user's issue.\n\nOnly transfer if\n -  the user explicitly asks for a human agent\n -  given the policy and the available tools, you cannot solve the user's issue.",
+          "parameters": {
+            "properties": {
+              "summary": {
+                "description": "A summary of the user's issue.",
+                "title": "Summary",
+                "type": "string"
+              }
+            },
+            "required": [
+              "summary"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      }
+    ]
+  },
+  "tools_config_3": {
+    "count": 1050,
+    "tool_count": 14,
+    "tool_names": [
+      "book_reservation",
+      "calculate",
+      "cancel_reservation",
+      "get_flight_status",
+      "get_reservation_details",
+      "get_user_details",
+      "list_all_airports",
+      "search_direct_flight",
+      "search_onestop_flight",
+      "send_certificate",
+      "transfer_to_human_agents",
+      "update_reservation_baggages",
+      "update_reservation_flights",
+      "update_reservation_passengers"
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "book_reservation",
+          "description": "Book a reservation.",
+          "parameters": {
+            "$defs": {
+              "FlightInfo": {
+                "properties": {
+                  "flight_number": {
+                    "description": "Flight number, such as 'HAT001'.",
+                    "title": "Flight Number",
+                    "type": "string"
+                  },
+                  "date": {
+                    "description": "The date for the flight in the format 'YYYY-MM-DD', such as '2024-05-01'.",
+                    "title": "Date",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "flight_number",
+                  "date"
+                ],
+                "title": "FlightInfo",
+                "type": "object"
+              },
+              "Passenger": {
+                "properties": {
+                  "first_name": {
+                    "description": "Passenger's first name",
+                    "title": "First Name",
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "description": "Passenger's last name",
+                    "title": "Last Name",
+                    "type": "string"
+                  },
+                  "dob": {
+                    "description": "Date of birth in YYYY-MM-DD format",
+                    "title": "Dob",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "first_name",
+                  "last_name",
+                  "dob"
+                ],
+                "title": "Passenger",
+                "type": "object"
+              },
+              "Payment": {
+                "properties": {
+                  "payment_id": {
+                    "description": "Unique identifier for the payment",
+                    "title": "Payment Id",
+                    "type": "string"
+                  },
+                  "amount": {
+                    "description": "Payment amount in dollars",
+                    "title": "Amount",
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "payment_id",
+                  "amount"
+                ],
+                "title": "Payment",
+                "type": "object"
+              }
+            },
+            "properties": {
+              "user_id": {
+                "description": "The ID of the user to book the reservation such as 'sara_doe_496'`.",
+                "title": "User Id",
+                "type": "string"
+              },
+              "origin": {
+                "description": "The IATA code for the origin city such as 'SFO'.",
+                "title": "Origin",
+                "type": "string"
+              },
+              "destination": {
+                "description": "The IATA code for the destination city such as 'JFK'.",
+                "title": "Destination",
+                "type": "string"
+              },
+              "flight_type": {
+                "description": "The type of flight such as 'one_way' or 'round_trip'.",
+                "enum": [
+                  "round_trip",
+                  "one_way"
+                ],
+                "title": "Flight Type",
+                "type": "string"
+              },
+              "cabin": {
+                "description": "The cabin class such as 'basic_economy', 'economy', or 'business'.",
+                "enum": [
+                  "business",
+                  "economy",
+                  "basic_economy"
+                ],
+                "title": "Cabin",
+                "type": "string"
+              },
+              "flights": {
+                "description": "An array of objects containing details about each piece of flight.",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FlightInfo"
+                    },
+                    {
+                      "additionalProperties": true,
+                      "type": "object"
+                    }
+                  ]
+                },
+                "title": "Flights",
+                "type": "array"
+              },
+              "passengers": {
+                "description": "An array of objects containing details about each passenger.",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/Passenger"
+                    },
+                    {
+                      "additionalProperties": true,
+                      "type": "object"
+                    }
+                  ]
+                },
+                "title": "Passengers",
+                "type": "array"
+              },
+              "payment_methods": {
+                "description": "An array of objects containing details about each payment method.",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/Payment"
+                    },
+                    {
+                      "additionalProperties": true,
+                      "type": "object"
+                    }
+                  ]
+                },
+                "title": "Payment Methods",
+                "type": "array"
+              },
+              "total_baggages": {
+                "description": "The total number of baggage items to book the reservation.",
+                "title": "Total Baggages",
+                "type": "integer"
+              },
+              "nonfree_baggages": {
+                "description": "The number of non-free baggage items to book the reservation.",
+                "title": "Nonfree Baggages",
+                "type": "integer"
+              },
+              "insurance": {
+                "description": "Whether the reservation has insurance.",
+                "enum": [
+                  "yes",
+                  "no"
+                ],
+                "title": "Insurance",
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "origin",
+              "destination",
+              "flight_type",
+              "cabin",
+              "flights",
+              "passengers",
+              "payment_methods",
+              "total_baggages",
+              "nonfree_baggages",
+              "insurance"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "calculate",
+          "description": "Calculate the result of a mathematical expression.",
+          "parameters": {
+            "properties": {
+              "expression": {
+                "description": "The mathematical expression to calculate, such as '2 + 2'. The expression can contain numbers, operators (+, -, *, /), parentheses, and spaces.",
+                "title": "Expression",
+                "type": "string"
+              }
+            },
+            "required": [
+              "expression"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "cancel_reservation",
+          "description": "Cancel the whole reservation.",
+          "parameters": {
+            "properties": {
+              "reservation_id": {
+                "description": "The reservation ID, such as 'ZFA04Y'.",
+                "title": "Reservation Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "reservation_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_reservation_details",
+          "description": "Get the details of a reservation.",
+          "parameters": {
+            "properties": {
+              "reservation_id": {
+                "description": "The reservation ID, such as '8JX2WO'.",
+                "title": "Reservation Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "reservation_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_user_details",
+          "description": "Get the details of a user, including their reservations.",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "description": "The user ID, such as 'sara_doe_496'.",
+                "title": "User Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "list_all_airports",
+          "description": "Returns a list of all available airports.",
+          "parameters": {
+            "properties": {},
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "search_direct_flight",
+          "description": "Search for direct flights between two cities on a specific date.",
+          "parameters": {
+            "properties": {
+              "origin": {
+                "description": "The origin city airport in three letters, such as 'JFK'.",
+                "title": "Origin",
+                "type": "string"
+              },
+              "destination": {
+                "description": "The destination city airport in three letters, such as 'LAX'.",
+                "title": "Destination",
+                "type": "string"
+              },
+              "date": {
+                "description": "The date of the flight in the format 'YYYY-MM-DD', such as '2024-01-01'.",
+                "title": "Date",
+                "type": "string"
+              }
+            },
+            "required": [
+              "origin",
+              "destination",
+              "date"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "search_onestop_flight",
+          "description": "Search for one-stop flights between two cities on a specific date.",
+          "parameters": {
+            "properties": {
+              "origin": {
+                "description": "The origin city airport in three letters, such as 'JFK'.",
+                "title": "Origin",
+                "type": "string"
+              },
+              "destination": {
+                "description": "The destination city airport in three letters, such as 'LAX'.",
+                "title": "Destination",
+                "type": "string"
+              },
+              "date": {
+                "description": "The date of the flight in the format 'YYYY-MM-DD', such as '2024-05-01'.",
+                "title": "Date",
+                "type": "string"
+              }
+            },
+            "required": [
+              "origin",
+              "destination",
+              "date"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "send_certificate",
+          "description": "Send a certificate to a user. Be careful!",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "description": "The ID of the user to book the reservation, such as 'sara_doe_496'.",
+                "title": "User Id",
+                "type": "string"
+              },
+              "amount": {
+                "description": "The amount of the certificate to send.",
+                "title": "Amount",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "user_id",
+              "amount"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "transfer_to_human_agents",
+          "description": "Transfer the user to a human agent, with a summary of the user's issue.\n\nOnly transfer if\n -  the user explicitly asks for a human agent\n -  given the policy and the available tools, you cannot solve the user's issue.",
+          "parameters": {
+            "properties": {
+              "summary": {
+                "description": "A summary of the user's issue.",
+                "title": "Summary",
+                "type": "string"
+              }
+            },
+            "required": [
+              "summary"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "update_reservation_baggages",
+          "description": "Update the baggage information of a reservation.",
+          "parameters": {
+            "properties": {
+              "reservation_id": {
+                "description": "The reservation ID, such as 'ZFA04Y'",
+                "title": "Reservation Id",
+                "type": "string"
+              },
+              "total_baggages": {
+                "description": "The updated total number of baggage items included in the reservation.",
+                "title": "Total Baggages",
+                "type": "integer"
+              },
+              "nonfree_baggages": {
+                "description": "The updated number of non-free baggage items included in the reservation.",
+                "title": "Nonfree Baggages",
+                "type": "integer"
+              },
+              "payment_id": {
+                "description": "The payment id stored in user profile, such as 'credit_card_7815826', 'gift_card_7815826', 'certificate_7815826'.",
+                "title": "Payment Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "reservation_id",
+              "total_baggages",
+              "nonfree_baggages",
+              "payment_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "update_reservation_flights",
+          "description": "Update the flight information of a reservation.",
+          "parameters": {
+            "$defs": {
+              "FlightInfo": {
+                "properties": {
+                  "flight_number": {
+                    "description": "Flight number, such as 'HAT001'.",
+                    "title": "Flight Number",
+                    "type": "string"
+                  },
+                  "date": {
+                    "description": "The date for the flight in the format 'YYYY-MM-DD', such as '2024-05-01'.",
+                    "title": "Date",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "flight_number",
+                  "date"
+                ],
+                "title": "FlightInfo",
+                "type": "object"
+              }
+            },
+            "properties": {
+              "reservation_id": {
+                "description": "The reservation ID, such as 'ZFA04Y'.",
+                "title": "Reservation Id",
+                "type": "string"
+              },
+              "cabin": {
+                "description": "The cabin class of the reservation",
+                "enum": [
+                  "business",
+                  "economy",
+                  "basic_economy"
+                ],
+                "title": "Cabin",
+                "type": "string"
+              },
+              "flights": {
+                "description": "An array of objects containing details about each piece of flight in the ENTIRE new reservation. Even if the a flight segment is not changed, it should still be included in the array.",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/FlightInfo"
+                    },
+                    {
+                      "additionalProperties": true,
+                      "type": "object"
+                    }
+                  ]
+                },
+                "title": "Flights",
+                "type": "array"
+              },
+              "payment_id": {
+                "description": "The payment id stored in user profile, such as 'credit_card_7815826', 'gift_card_7815826', 'certificate_7815826'.",
+                "title": "Payment Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "reservation_id",
+              "cabin",
+              "flights",
+              "payment_id"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "update_reservation_passengers",
+          "description": "Update the passenger information of a reservation.",
+          "parameters": {
+            "$defs": {
+              "Passenger": {
+                "properties": {
+                  "first_name": {
+                    "description": "Passenger's first name",
+                    "title": "First Name",
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "description": "Passenger's last name",
+                    "title": "Last Name",
+                    "type": "string"
+                  },
+                  "dob": {
+                    "description": "Date of birth in YYYY-MM-DD format",
+                    "title": "Dob",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "first_name",
+                  "last_name",
+                  "dob"
+                ],
+                "title": "Passenger",
+                "type": "object"
+              }
+            },
+            "properties": {
+              "reservation_id": {
+                "description": "The reservation ID, such as 'ZFA04Y'.",
+                "title": "Reservation Id",
+                "type": "string"
+              },
+              "passengers": {
+                "description": "An array of objects containing details about each passenger.",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/Passenger"
+                    },
+                    {
+                      "additionalProperties": true,
+                      "type": "object"
+                    }
+                  ]
+                },
+                "title": "Passengers",
+                "type": "array"
+              }
+            },
+            "required": [
+              "reservation_id",
+              "passengers"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_flight_status",
+          "description": "Get the status of a flight.",
+          "parameters": {
+            "properties": {
+              "flight_number": {
+                "description": "The flight number.",
+                "title": "Flight Number",
+                "type": "string"
+              },
+              "date": {
+                "description": "The date of the flight.",
+                "title": "Date",
+                "type": "string"
+              }
+            },
+            "required": [
+              "flight_number",
+              "date"
+            ],
+            "title": "parameters",
+            "type": "object"
+          }
+        }
+      }
+    ]
+  }
+}

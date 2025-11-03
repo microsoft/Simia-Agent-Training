@@ -1,0 +1,27 @@
+{
+  "azure_endpoint": "",
+  "api_version": "2025-04-01-preview",
+  "deployment": "gpt-5",
+  "output_settings": {
+    "output_dir": "output",
+    "output_file": "tau2_10_gpt5.json",
+    "save_intermediate": true,
+    "backup_existing": true
+  },
+  "sample_data_path": "Simia_SFT/Tau2/APIGen_5k_preprocessed.json",
+  "gpt_log_settings": {
+    "enable_logging": true,
+    "log_file": "gpt_log_tau2_10_gpt5_{timestamp}.jsonl"
+  },
+  "generation_settings": {
+    "max_conversations": 10,
+    "temperature": 1,
+    "max_tokens": 60000,
+    "retry_attempts": 1,
+    "parallel_workers": 200,
+    "batch_size": 2500,
+    "rate_limit_delay": 1,
+    "save_progress": true
+  },
+  "timeout": 500
+} 
