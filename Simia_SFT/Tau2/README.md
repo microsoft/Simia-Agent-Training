@@ -8,6 +8,15 @@ Tau2 is a toolkit for generating and processing Agent Airline and Retail trainin
 
 ### 1. Configuration File
 
+Unzip the pre-processed seed data
+```python
+cd Simia_SFT/Tau2
+unzip APIGen_5k_preprocessed_zip.zip
+cd ..
+cd ..
+```
+
+
 Edit `config.json` to set generation parameters:
 
 ```json
