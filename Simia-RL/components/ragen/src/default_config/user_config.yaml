@@ -84,9 +84,13 @@ custom_envs:
       output_dir: "./outputs/training_records/Simia-RL-8B-tau2-APIGen-MT/simulated_env_tau2/output"
       train_data_path: "./APIGen_5k_processed.json"
       training_record_dir: "./outputs/checkpoints/Simia-RL-8B-tau2-APIGen-MT/simulated_env_tau2/training_record"
-      azure_endpoint: "${AZURE_OPENAI_ENDPOINT}"
+      api_type: "openai"
+      azure_endpoint: ""
       api_version: "2025-04-01-preview"
       deployment: "gpt-5"
+      openai_api_key: ""
+      openai_base_url: "https://api.openai.com/v1"
+      openai_model: "gpt-5"
       temperature: 1.0
       max_tokens: 60000
       retry_attempts: 3
