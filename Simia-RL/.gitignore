@@ -3,7 +3,7 @@ __pycache__/
 mlruns/
 outputs/
 components/ragen/src/_environments/
-components/ragen/src/default_config/user_config.yaml
+# components/ragen/src/default_config/user_config.yaml
 components/ragen/src/mlruns/
 components/ragen/src/outputs/
 /config.json
@@ -23,3 +23,8 @@ training_record/
 # Logs
 *.log
 wandb/
+
+simulated_env_config.yaml
+default_config/user_config.yaml
+APIGen_5k_processed.json
+run_simulated_env_RL.sh
