@@ -24,7 +24,7 @@ training_record/
 *.log
 wandb/
 
-run_simulated_env_RL.sh
-simulated_env_config.yaml
-default_config/user_config.yaml
+# run_simulated_env_RL.sh
+# simulated_env_config.yaml
+# default_config/user_config.yaml
 APIGen_5k_processed.json

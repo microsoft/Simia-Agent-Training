@@ -15,10 +15,20 @@ class SimulatedEnvConfig:
     # Training record save path
     training_record_dir: str = "checkpoints/general-simulated-tau2/training_record"
 
-    # GPT configuration
+    # API configuration
+    api_type: str = "azure"  # "azure" or "openai"
+    
+    # Azure OpenAI configuration
     azure_endpoint: str = "${AZURE_OPENAI_ENDPOINT}"
     api_version: str = "2025-04-01-preview"
     deployment: str = "gpt-5"
+    
+    # OpenAI configuration
+    openai_api_key: str = "${OPENAI_API_KEY}"
+    openai_base_url: str = "https://api.openai.com/v1"
+    openai_model: str = "gpt-5"
+    
+    # Common configuration
     temperature: float = 1.0
     max_tokens: int = 60000
     retry_attempts: int = 3

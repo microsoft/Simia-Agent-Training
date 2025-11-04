@@ -15,8 +15,18 @@ Reinforcement learning training module based on GRPO algorithm, using GPT as env
 cd Simia-RL
 bash setup_local.sh
 
-# 2. Configure environment variables
+# 2. Configure API - Choose ONE:
+
+# Option A: Azure OpenAI
+export API_TYPE="azure"
 export AZURE_OPENAI_ENDPOINT="https://your-endpoint.cognitiveservices.azure.com/"
+az login  # Azure authentication
+
+# Option B: OpenAI API
+export API_TYPE="openai"
+export OPENAI_API_KEY="sk-your-api-key-here"
+
+# Set WandB 
 export WANDB_API_KEY="your_wandb_api_key"
 
 # 3. Start training (auto-generates config and starts training)
@@ -49,8 +59,10 @@ es_manager:
 custom_envs:
   GeneralSimulated:
     env_config:
+      api_type: "azure"  # or "openai"
       train_data_path: "./APIGen_5k_processed.json"
-      deployment: "gpt-5"
+      deployment: "gpt-5"  # for Azure
+      openai_model: "gpt-4o"  # for OpenAI
       max_simulation_steps: 100
 ```
 

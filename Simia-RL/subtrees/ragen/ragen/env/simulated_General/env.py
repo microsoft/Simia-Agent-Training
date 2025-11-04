@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from azure.identity import AzureCliCredential, get_bearer_token_provider
-from openai import AzureOpenAI
+from openai import AzureOpenAI, OpenAI
 
 from ragen.env.base import BaseEnv
 from .config import SimulatedEnvConfig
@@ -71,9 +71,10 @@ class SimulatedGeneralEnv(BaseEnv):
         self.training_record_dir = Path(getattr(self.config, "training_record_dir", DEFAULT_TRAINING_RECORD_DIR))
         self.training_record_dir.mkdir(parents=True, exist_ok=True)
 
-        # Azure client setup
-        self.client: Optional[AzureOpenAI] = None
-        self._setup_azure_client()
+        # API client setup
+        self.client = None
+        self.model = None  # Store model name
+        self._setup_api_client()
 
         # Load dataset
         self._ensure_dataset_loaded()
@@ -150,21 +151,38 @@ class SimulatedGeneralEnv(BaseEnv):
         return dict(sample) if isinstance(sample, dict) else sample
 
     # ------------------------------------------------------------------
-    # Azure client setup
+    # API client setup
     # ------------------------------------------------------------------
-    def _setup_azure_client(self) -> None:
+    def _setup_api_client(self) -> None:
+        """Initialize OpenAI or Azure OpenAI client based on config."""
+        api_type = getattr(self.config, 'api_type', 'azure').lower()
+        
         try:
-            credential = AzureCliCredential()
-            token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
-            self.client = AzureOpenAI(
-                azure_ad_token_provider=token_provider,
-                azure_endpoint=self.config.azure_endpoint,
-                api_version=self.config.api_version,
-            )
-            self.logger.info("Azure OpenAI client initialized successfully (deployment=%s)", self.config.deployment)
+            if api_type == 'azure':
+                credential = AzureCliCredential()
+                token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
+                self.client = AzureOpenAI(
+                    azure_ad_token_provider=token_provider,
+                    azure_endpoint=self.config.azure_endpoint,
+                    api_version=self.config.api_version,
+                )
+                self.model = self.config.deployment
+                self.logger.info("Azure OpenAI client initialized (deployment=%s)", self.model)
+            elif api_type == 'openai':
+                api_key = getattr(self.config, 'openai_api_key', '')
+                base_url = getattr(self.config, 'openai_base_url', 'https://api.openai.com/v1')
+                self.client = OpenAI(
+                    api_key=api_key,
+                    base_url=base_url
+                )
+                self.model = getattr(self.config, 'openai_model', 'gpt-4o')
+                self.logger.info("OpenAI client initialized (model=%s)", self.model)
+            else:
+                raise ValueError(f"Invalid api_type: {api_type}. Must be 'azure' or 'openai'")
         except Exception as exc:
-            self.logger.error("Azure OpenAI client initialization failed: %s", exc)
+            self.logger.error("API client initialization failed: %s", exc)
             self.client = None
+            self.model = None
 
     # ------------------------------------------------------------------
     # Reset & step
@@ -535,21 +553,26 @@ Please perform the evaluation:"""
     # ------------------------------------------------------------------
     def _call_gpt(self, messages: List[Dict[str, str]]) -> str:
         if not self.client:
-            raise RuntimeError("Azure OpenAI client is not initialized")
+            raise RuntimeError("API client is not initialized")
 
         last_error: Optional[Exception] = None
         for attempt in range(1, self.config.retry_attempts + 1):
             try:
-                completion = self.client.chat.completions.create(
-                    model=self.config.deployment,
-                    messages=messages,
-                    temperature=self.config.temperature,
-                    max_completion_tokens=self.config.max_tokens,
-                    timeout=self.config.timeout,
-                )
+                # Prepare API call parameters
+                call_params = {
+                    "model": self.model,
+                    "messages": messages,
+                    "temperature": self.config.temperature,
+                    "timeout": self.config.timeout,
+                }
+                
+                # Always use max_completion_tokens (works for both Azure and new OpenAI models)
+                call_params["max_completion_tokens"] = self.config.max_tokens
+                
+                completion = self.client.chat.completions.create(**call_params)
                 content = completion.choices[0].message.content
                 if content is None:
-                    raise ValueError("Empty response from Azure OpenAI")
+                    raise ValueError("Empty response from API")
                 
                 # If response contains <think> tags, extract only content after </think>
                 if "</think>" in content:
