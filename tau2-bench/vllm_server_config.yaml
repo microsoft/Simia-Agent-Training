@@ -1,0 +1,13 @@
+model: Simia-Agent/Simia-Tau-SFT-Qwen3-8B
+host: "0.0.0.0"
+port: 8000
+uvicorn-log-level: "debug"
+max-model-len: 16000
+gpu-memory-utilization: 0.8
+tensor-parallel-size: 4
+dtype: auto
+enable-log-requests: true
+enable-log-outputs: true
+enable-auto-tool-choice: true
+tool-call-parser: hermes
+chat-template: qwen3_nonthinking.jinja
