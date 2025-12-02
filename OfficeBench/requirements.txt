@@ -204,7 +204,7 @@ threadpoolctl==3.5.0
 tifffile==2024.12.12
 tiktoken==0.8.0
 tokenizers==0.21.0
-torch==2.5.1
+torch==2.8.0
 torchvision==0.20.1
 tornado
 tqdm==4.67.1
