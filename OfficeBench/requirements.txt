@@ -91,7 +91,7 @@ jiter==0.8.2
 joblib==1.4.2
 jupyter_client
 jupyter_core
-keras==3.7.0
+keras==3.12.0
 Keras-Applications==1.0.8
 keras-ocr==0.9.3
 kiwisolver==1.4.7
