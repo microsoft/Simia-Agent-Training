@@ -51,7 +51,7 @@ exceptiongroup
 executing 
 Faker==33.1.0
 Farama-Notifications==0.0.4
-filelock==3.16.1
+filelock==3.20.1
 fire==0.5.0
 Flask==3.1.0
 flatbuffers==24.3.25
