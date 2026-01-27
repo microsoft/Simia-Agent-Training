@@ -20,5 +20,7 @@ Navigate to `Simia_SFT/` for more information.
 ### RL Framework
 Navigate to `Simia-RL/` for more information.
 
+### Eval
+Navigate to tau2-bench/ and OfficeBench/ for more information.
 ---
 
